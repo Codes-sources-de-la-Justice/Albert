@@ -17,7 +17,7 @@ Commands:
                                Each Json element corresponds to a piece of sheet with a length of 1000 characters called chunk, cut while keeping sentences intact.
                                Chunks are created under <path>/sheets_as_chunks.json
 
-    index                      Create the given index to search relevant document given a query, loading data from <path>. Each index is created using a specific sourcs as ground-truth.
+    index                      Create the given index to search relevant document given a query, loading data from <path>. Each index is created using a specific source as ground-truth.
                                See the docs to see which sources are used by which index.
 
 Options:
