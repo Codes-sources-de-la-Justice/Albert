@@ -92,6 +92,7 @@ def prompts_from_llm_table(table: list[tuple]) -> dict[str, PromptConfig]:
 
         templates[model_name] = {"config": config, "templates": prompt_templates}
 
+    #print(f"- Templates =\n\t{templates}")
     return templates
 
 
@@ -270,6 +271,7 @@ class Prompter:
         else:
             raw_prompt = prompt
 
+        print(f"- System prompt =\n\t{system_prompt}\n- Prompt =\n\t{raw_prompt}\n- Format =\n\t{prompt_format}")
         return raw_prompt
 
     def make_variables(
@@ -301,6 +303,7 @@ class Prompter:
                 data[k] = v
 
         search_query = data.get("search_query", data.get("query"))
+        print(f"- Search query =\n\t{search_query}")
         client = AlbertClient(api_token=self.api_token)
 
         # Extract one similar value in a collection from query
@@ -527,4 +530,5 @@ def get_prompter(
         # Overwrite prompt_format
         config["prompt_format"] = prompt_format
 
+    print(f"- Prompt config =\n\t{config}\n- Prompt template =\n\t{template}")
     return Prompter(config=config, template=template)

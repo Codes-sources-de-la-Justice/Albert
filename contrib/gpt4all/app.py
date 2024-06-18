@@ -21,15 +21,15 @@ from pyalbert import Logging
 from pyalbert.schemas.llm import Embeddings
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--host", type=str, default="localhost", help="Host name.")
-parser.add_argument("--port", type=int, default=8000, help="Port number.")
-parser.add_argument("--models-dir", type=str, required=True, help="Storage directory for model directories.")  # fmt: off
+parser.add_argument("--debug", action="store_true", default=False, help="Print debug logs.")
 parser.add_argument("--embeddings-hf-repo-id", type=str, default=None, nargs='?', help="Hugging Face repository ID for embeddings model. If not provided, the embeddings endpoint is not be available.")  # fmt: off
+parser.add_argument("--force-download", action="store_true", default=False, help="Force download of model files when API startups.")  # fmt: off
+parser.add_argument("--host", type=str, default="localhost", help="Host name.")
 parser.add_argument("--llm-hf-repo-id", type=str, required=True, help="Hugging Face repository ID for llm model.")  # fmt: off
 parser.add_argument("--llm-model-file", type=str, default=None, help="Model file to use for LLM model (bin format is required).")  # fmt: off
+parser.add_argument("--models-dir", type=str, required=True, help="Storage directory for model directories.")  # fmt: off
+parser.add_argument("--port", type=int, default=8000, help="Port number.")
 parser.add_argument("--root-path", type=str, default=None, help="FastAPI root_path when app is behind a path based routing proxy.")  # fmt: off
-parser.add_argument("--force-download", action="store_true", default=False, help="Force download of model files when API startups.")  # fmt: off
-parser.add_argument("--debug", action="store_true", default=False, help="Print debug logs.")
 
 args = parser.parse_args()
 
@@ -211,7 +211,7 @@ async def embeddings(request: Embeddings) -> Response:
 
 @app.post("/generate")
 async def generate(request: Request) -> Response:
-    params = request.dict()
+    params = await request.json()
     prompt = params.pop("prompt")
     stream = params.pop("stream", False)
     sampling_params = {
@@ -221,29 +221,31 @@ async def generate(request: Request) -> Response:
     }
     # @TODO: callback to stop ?
 
-    tokens = app.state.llm_model.generate(prompt=prompt, **sampling_params)
+    tokens = MODELS["llm_model"].generate(prompt=prompt, **sampling_params)
 
     # Streaming case
     if stream:
-
         async def stream_results(tokens) -> AsyncGenerator[bytes, None]:
             output = ""
             for token in tokens:
                 output += token
                 yield (json.dumps({"text": output}) + "\0").encode("utf-8")
-
         background_tasks = BackgroundTasks()
         return StreamingResponse(stream_results(tokens), background=background_tasks)
 
     # Non-streaming case
     response = JSONResponse({"text": tokens})
-
     return response
 
 
 @app.get("/get_prompt_config")
 async def get_prompt_config(
     request: Request, config_file: Optional[str] = None, allow_download: bool = True
+	# Comment the previous code line and uncomment the following code line for models not fulfilling the required
+	# prompt_config.yml, rag_prompt_template.jinja and simple_prompt_template.jinja files in their repository.
+	# Thus, there will be no error on an attempt to download these missing files from the model repository.
+	# To make the model work, copy these files from an existing Albert model to the model local directory.
+#    request: Request, config_file: Optional[str] = None, allow_download: bool = False
 ) -> Response:
     """
     Get the templates files for the model.

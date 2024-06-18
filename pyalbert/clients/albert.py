@@ -74,6 +74,7 @@ class AlbertClient:
 
     def _sign_in(self):
         json_data = {"username": self.username, "password": self.password}
+        #print(f"User name = {self.username}, password = {self.password}")
         response = self._fetch("POST", "/sign_in", json_data=json_data)
         self.token = response.json()["token"]
         self.token_dt = datetime.utcnow()

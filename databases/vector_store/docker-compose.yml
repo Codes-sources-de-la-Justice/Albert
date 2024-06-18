@@ -4,6 +4,7 @@ services:
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.9.1
     restart: always
+    container_name: albert_db_vector_elasticsearch
     environment:
         discovery.type: single-node
         xpack.security.enabled: false
@@ -17,6 +18,7 @@ services:
   qdrant:
     image: qdrant/qdrant:v1.5.0
     restart: always
+    container_name: albert_db_vector_qdrant
     ports:
       - ${QDRANT_REST_PORT:-6333}:6333
       - ${QDRANT_GRPC_PORT:-6334}:6334

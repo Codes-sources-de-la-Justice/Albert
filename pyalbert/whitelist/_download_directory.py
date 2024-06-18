@@ -63,7 +63,7 @@ def download_directory(
             logger.error(traceback.print_exc())
             exit(1)
 
-        logger.info(f"unpacking {ressource} archive...")
+        logger.info(f"\nunpacking {ressource} archive...")
         shutil.unpack_archive(os.path.join(storage_dir, file), storage_dir)
 
         logger.info(f"deleting {ressource} archive...")

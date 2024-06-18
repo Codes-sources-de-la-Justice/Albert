@@ -11,13 +11,13 @@ Usage:
 Commands:
     create_whitelist           Create a whitelist file for postprocessing. By default, files are stored under /data/whitelist directory.
 
-    download_rag_sources       Download public services source of data. Downloaded data should consitute the inputs for the further processing steps that feed the RAG.
+    download_rag_sources       Download public services source of data. Downloaded data should constitute the inputs for the further processing steps that feed the RAG.
 
-    make_chunks                Parse XML files from data.gouv (public service sheets), located in the DIRECTORY folder to transform them into sheets in Json format.
-                               Each Json element corresponds to a piece of sheet with a length of 1000 characters called chunk, cut while keeping sentences intact.
+    make_chunks                Parse XML files from data.gouv (public service sheets), located in the DIRECTORY folder to transform them into sheets in JSON format.
+                               Each JSON element corresponds to a piece of sheet with a length of 1000 characters called chunk, cut while keeping sentences intact.
                                Chunks are created under <path>/sheets_as_chunks.json
 
-    index                      Create the given index to search relevant document given a query, loading data from <path>. Each index is created using a specific sourcs as ground-truth.
+    index                      Create the given index to search relevant document given a query, loading data from <path>. Each index is created using a specific source as ground-truth.
                                See the docs to see which sources are used by which index.
 
 Options:
@@ -51,11 +51,15 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 
 from pyalbert.config import SHEET_SOURCES
+from pyalbert import Logging
+
 
 if __name__ == "__main__":
     # Parse CLI arguments
     args = docopt(__doc__, version="0")
     debug = True if args["--debug"] else False
+    logging = Logging(level="DEBUG" if debug else "INFO")
+    logger = logging.get_logger()
     
     if args["create_whitelist"]:
         from pyalbert.whitelist import create_whitelist, download_directory
@@ -70,6 +74,7 @@ if __name__ == "__main__":
             if args["--config-file"] is None
             else args["--config-file"]
         )  # if --config-file is not provided, use default path /config/whitelist_config.json
+        logger.debug(f"Configuration file for white list = {config_file}")
         download_directory(storage_dir=storage_dir, config_file=config_file, debug=debug)
         create_whitelist(storage_dir=storage_dir, config_file=config_file, debug=debug)
 

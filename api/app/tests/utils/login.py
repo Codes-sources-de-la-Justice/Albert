@@ -3,12 +3,12 @@ import re
 
 from fastapi.testclient import TestClient
 
-from app.mockups.mailjet_mockup import MAILJET_FOLDER
+from pyalbert.config import MJ_FOLDER
 
 
 def get_password_reset_token():
-    email_filename = sorted(os.listdir(MAILJET_FOLDER))[-1]
-    email_path = os.path.join(MAILJET_FOLDER, email_filename)
+    email_filename = sorted(os.listdir(MJ_FOLDER))[-1]
+    email_path = os.path.join(MJ_FOLDER, email_filename)
     with open(email_path, mode="r") as f:
         email = f.read()
     p = r"[0-9a-f]{8}[0-9a-f]{4}[0-9a-f]{4}[0-9a-f]{4}[0-9a-f]{12}"

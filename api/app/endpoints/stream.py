@@ -50,7 +50,6 @@ def create_chat_stream(
     db: Session = Depends(get_db),
     current_user: models.User = Depends(get_current_user),
 ) -> schemas.Stream:
-    print("test")
     db_chat = crud.chat.get_chat(db, chat_id)
     if db_chat is None:
         raise HTTPException(404, detail="Chat not found")
@@ -169,7 +168,7 @@ def start_stream(
     )
 
     while len(prompt.split()) * 1.25 > prompter.sampling_params["max_tokens"] * 0.8 and limit > 1:
-        print("WARNING: promt size overflow, reducing limit...")
+        print("WARNING: prompt size overflow, reducing limit...")
         limit -= 1
         prompt = prompter.make_prompt(
             query=query,
@@ -185,6 +184,8 @@ def start_stream(
 
     if len(prompt.split()) * 1.25 > prompter.sampling_params["max_tokens"] * 0.8:
         raise HTTPException(413, detail="Prompt too large")
+
+    print(f"Prompt for model {model_name} in {mode} mode :\n{prompt}")
 
     # Keep reference of rag used sources if any
     rag_sources = []
