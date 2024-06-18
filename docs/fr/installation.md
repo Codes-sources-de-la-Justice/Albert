@@ -31,7 +31,8 @@ Pour plus d'informations sur les modèles, référez-vous à la documentation su
 
   La commande pour build l'image est donc la suivante :
   ```sh
-  docker build --tag albert/llm:latest --build-context pyalbert=./pyalbert --file ./contrib/gpt4all/Dockerfile ./contrib/gpt4all --no-cache
+  docker build --tag albert/llm_ggml:latest --build-context pyalbert=./pyalbert --file ./contrib/gpt4all/Dockerfile_GGML ./contrib/gpt4all --no-cache
+  docker build --tag albert/llm_gguf:latest --build-context pyalbert=./pyalbert --file ./contrib/gpt4all/Dockerfile_GGUF ./contrib/gpt4all --no-cache
   ```
   Les modèles disponibles sans GPU sont listés dans la [documentation sur les modèles](./models.md).
 
@@ -45,7 +46,8 @@ Pour plus d'informations sur les modèles, référez-vous à la documentation su
 
 * Avec [GPT4All](https://gpt4all.io/), dans le cas sans GPU pour un système d'exploitation non MacOS :
   ```sh
-  docker compose --env-file ./contrib/gpt4all/.env.example --file ./contrib/gpt4all/docker-compose.yml up --detach
+  docker compose --env-file ./contrib/gpt4all/.env_GGML --file ./contrib/gpt4all/docker-compose_GGML.yml up --detach
+  docker compose --env-file ./contrib/gpt4all/.env_GGUF --file ./contrib/gpt4all/docker-compose_GGUF.yml up --detach
   ```
 
 

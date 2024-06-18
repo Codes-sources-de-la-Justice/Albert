@@ -1,0 +1,19 @@
+FROM --platform=linux/amd64 python:3.10-slim
+
+WORKDIR /code
+
+# to export pyalbert as a python package
+ENV PYTHONPATH="$PYTHONPATH:/code"
+
+# add pyproject before the rest of the code to cache the pip install
+ADD ./pyproject_GGML.toml ./pyproject.toml
+RUN pip install --upgrade pip && pip install --no-cache-dir .
+
+# add the rest of the code
+ADD . .
+# adds renamed app.py after having added the rest of the code
+ADD ./app_GGML.py ./app.py
+# deletes each file the name of which contains GGML or GGUF
+RUN rm -f ./*_GGML ./*_GGUF ./*_GGML.* ./*_GGUF.*
+# copies PyAlbert tool
+COPY --from=pyalbert . ./pyalbert

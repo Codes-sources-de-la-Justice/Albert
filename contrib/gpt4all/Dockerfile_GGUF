@@ -1,0 +1,47 @@
+FROM --platform=linux/amd64 python:3.12-slim
+
+WORKDIR /code
+
+# to export pyalbert as a python package
+ENV PYTHONPATH="$PYTHONPATH:/code"
+
+# add pyproject before the rest of the code to cache the pip install
+ADD ./pyproject_GGUF.toml ./pyproject.toml
+RUN pip install --upgrade pip
+
+
+#--- Instructions pour compiler gpt4all ---#
+
+# màj les listes des référentiels de paquetages APT
+#RUN apt update
+# installe les paquetages cmake, git, liblzma-dev et wget
+#RUN apt-get install -y build-essential cmake git liblzma-dev wget
+
+# paquetages Vulcain
+#RUN wget -qO - https://packages.lunarg.com/lunarg-signing-key-pub.asc | tee /etc/apt/trusted.gpg.d/lunarg.asc
+#RUN wget -qO /etc/apt/sources.list.d/lunarg-vulkan-jammy.list http://packages.lunarg.com/vulkan/lunarg-vulkan-jammy.list
+# màj les listes des référentiels de paquetages APT
+#RUN apt update
+# installe les paquetages Vulcain
+#RUN apt-get install -y vulkan-sdk
+#RUN apt-get install -y libglfw3-dev libglm-dev libvulkan-dev spirv-tools vulkan-tools vulkan-validationlayers-dev
+# downloads the glslc shader compiler from https://storage.googleapis.com/shaderc/badges/build_link_linux_gcc_release.html
+#RUN cd /tmp && wget -qO ./glslc.html https://storage.googleapis.com/shaderc/badges/build_link_linux_gcc_release.html && sed -n -e 's/^.*url=\(.*\.tgz\).* \/>/\1/p' ./glslc.html | xargs wget -qO ./glslc.tgz && tar -C /usr/local/bin --strip-components=2 -xzvf ./glslc.tgz install/bin/glslc
+
+# builds gpt4all to avoid missing libllama.sso library
+#RUN cd /tmp && git clone --recurse-submodules https://github.com/nomic-ai/gpt4all && cd gpt4all/gpt4all-backend/ && mkdir build && cd build && cmake .. -DLLMODEL_CUDA=OFF -DLLMODEL_KOMPUTE=OFF && cmake --build . --parallel && cd ../../gpt4all-bindings/python && pip install -e .
+
+#------------------------------------------#
+
+# installs all the other modules
+#RUN pip install --no-cache-dir --use-pep517 .
+RUN pip install --no-cache-dir .
+
+# adds the rest of the code
+ADD . .
+# adds renamed app.py after having added the rest of the code
+ADD ./app_GGUF.py ./app.py
+# deletes each file the name of which contains GGML or GGUF
+RUN rm -f ./*_GGML ./*_GGUF ./*_GGML.* ./*_GGUF.*
+# copies PyAlbert tool
+COPY --from=pyalbert . ./pyalbert
