@@ -391,6 +391,10 @@ Voir également la [documentation d'obtention d'un jeton d'accès à l'API Alber
 
 ### En local, sans Docker
 
+* Sur Apple, mettre à jour le lien vers les certificats pour Python 3.x (>= 3.6) afin d'éviter les erreurs au lancement de PyAlbert
+  ```sh
+  /Applications/Python\ 3.x/Install\ Certificates.command
+  ```
 * Définir le port d'écoute des embeddings à la valeur du port de l'API du LLM
   ```sh
   export EMBEDDINGS_PORT=8000
