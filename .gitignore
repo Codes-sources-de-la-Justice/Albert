@@ -1,15 +1,4 @@
 #
-# Projet
-#
-_data/
-api/tiny_albert.bin
-
-# api
-api/app/*.bin
-api/app/*.db
-api/app/tests/test_data/mailjet
-
-#
 # Default
 #
 
@@ -27,10 +16,6 @@ eggs/
 lib/
 lib64/
 
-# Jupyter Notebook
-.ipynb_checkpoints
-.virtual_documents/ 
-
 # Environments
 .DS_Store
 .idea/
@@ -45,22 +30,38 @@ env.bak/
 venv.bak/
 .envrc
 
+# Excel
+.~lock*#
+
+# Jupyter Notebook
+.ipynb_checkpoints
+.virtual_documents/ 
+
 # mypy
 .mypy_cache/
 
-# Excel
-.~lock*#
+# pyenv & rye
+.python-version
 
 # Pytest / Coverage
 .coverage
 .pytest_cache/
 htmlcov/
 
-# pyenv & rye
-.python-version
-
 # Ruff
 .ruff_cache
+
+
+#
+# Projet
+#
+_data/
+api/tiny_albert.bin
+
+# api
+api/app/*.bin
+api/app/*.db
+api/app/tests/test_data/mailjet
 
 # Distribution / packaging
 .Python
@@ -84,3 +85,8 @@ share/python-wheels/
 MANIFEST
 .pdm-python
 *.lock
+
+# PyAlbert
+/api/pyalbert
+/contrib/gpt4all/pyalbert
+

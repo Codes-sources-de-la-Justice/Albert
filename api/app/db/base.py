@@ -12,7 +12,7 @@ from pyalbert.config import ENV
 
 
 def get_db_url() -> str:
-    if ENV in ("unittest", "dev"):
+    if ENV in ("unittest"):
         db_uri = "sqlite:///" + os.path.join(tempfile.gettempdir(), f"albert-{ENV}-sqlite3.db")
     else:
         db_user = "postgres"

@@ -40,6 +40,7 @@ POSTGRES_PASSWORD = os.getenv("POSTGRES_PASSWORD", "changeme")
 # Email
 MJ_API_KEY = os.getenv("MJ_API_KEY")
 MJ_API_SECRET = os.getenv("MJ_API_SECRET")
+MJ_FOLDER = os.getenv("MJ_FOLDER")
 CONTACT_EMAIL = os.getenv("CONTACT_EMAIL")
 
 # Public Urls

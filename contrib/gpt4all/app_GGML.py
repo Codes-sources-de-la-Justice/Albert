@@ -126,8 +126,8 @@ async def download_and_run_models(app: FastAPI):
         model_name=args.llm_model_file,
         model_path=args.model,
         allow_download=False,
-        device="cpu",
-        verbose=args.debug,
+#        device="cpu",
+#        verbose=args.debug,
     )
 
     MODELS["llm_model"] = llm_model

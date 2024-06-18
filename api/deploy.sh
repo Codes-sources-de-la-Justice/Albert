@@ -6,7 +6,7 @@ Help()
    # Display Help
    echo "Dynamic deploy api containers."
    echo
-   echo "Syntax: bash build.sh [-h|r|d|e]"
+   echo "Syntax: bash build.sh [-h|r|e]"
    echo "options:"
    echo "h          display this help and exit"
    echo "r          path to routing table file"

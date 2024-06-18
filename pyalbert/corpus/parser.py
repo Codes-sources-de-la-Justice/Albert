@@ -386,8 +386,12 @@ def _parse_xml_text(xml_file, structured=False) -> dict:
             current.append("Liste des situations :")
             for i, situation in enumerate(soup.find("ListeSituations").find_all("Situation")):
                 situation_title = normalize(situation.find("Titre").get_text(" ", strip=True))
-                situation_texte = normalize(situation.find("Texte").get_text(" ", strip=True))
-                current.append(f"Cas n°{i+1} : {situation_title} : {situation_texte}")
+                situation_texte = situation.find("Texte")
+                if situation_texte:
+                    situation_texte = normalize(situation_texte.get_text(" ", strip=True))
+                    current.append(f"Cas n°{i+1} : {situation_title} : {situation_texte}")
+                else:
+                    print(f"Warning on situation {situation_title} : Texte == {situation_texte} ==> not stored")
 
         if soup.find("Publication") is not None:
             t = soup.find("Publication").find("Texte", recursive=False)
