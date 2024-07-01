@@ -6,7 +6,7 @@ import requests
 
 from pyalbert.config import FIRST_ADMIN_EMAIL, FIRST_ADMIN_PASSWORD
 
-url = "http://127.0.0.1:8000"
+url = "http://127.0.0.1:8100"
 
 # Sign In:
 response = requests.post(
@@ -28,7 +28,7 @@ data = {
     # "query": "Quel est la limite d'age pour voter en france, et quelle sont les échances électorales ?",
     # "query": "Qu'est ce que la DITP et la DINUM ?",
     "model_name": "AgentPublic/albertlight-7b",
-    "mode": "rag",
+    "mode": "simple",
     # "sources": ["travail-emploi"],
     # "should_sids": ["F35789"],
     # "must_not_sids": ["F35789"],
@@ -43,6 +43,8 @@ if not response.ok:
     response.raise_for_status()
 
 stream_id = response.json()["id"]
+print(f"stream_id {stream_id} ")
+
 
 try:
     if json.loads(response.text)["postprocessing"]:
@@ -57,6 +59,7 @@ except KeyError:
 # Start Stream:
 data = {"stream_id": stream_id}
 response = requests.get(f"{url}/stream/{stream_id}/start", json=data, headers=headers, stream=True)
+print(f"response stream start {response}")
 if not response.ok:
     error_detail = response.json().get("detail")
     print(f"Error: {error_detail}")

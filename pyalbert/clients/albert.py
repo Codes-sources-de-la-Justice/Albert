@@ -161,8 +161,9 @@ class LlmClient:
     def _get_response(response: requests.Response) -> str:
         data = json.loads(response.content)
         output = data["text"]
+        return ''.join(output)
+        #return output[0].strip()
         # Beams ignored
-        return output[0].strip()
 
     @staticmethod
     def _get_streaming_response(response: requests.Response) -> Iterable[str]:
@@ -191,11 +192,14 @@ class LlmClient:
         data["temperature"] = data["temperature"] / 100
         data["stream"] = stream
         response = requests.post(url, json=data, stream=stream)
-
+        """
         if stream:
             return self._get_streaming_response(response)
         else:
             return self._get_response(response)
+        """
+        res = self._get_response(response)
+        return res
 
     # Only one embedding model supported for now
     @classmethod
@@ -214,6 +218,7 @@ class LlmClient:
             json_data["doc_type"] = doc_type
         if model:
             json_data["model"] = model
+        t=url.rstrip("/") + "/embeddings"    
         response = requests.post(url.rstrip("/") + "/embeddings", json=json_data)
         log_and_raise_for_status(response)
         results = response.json()

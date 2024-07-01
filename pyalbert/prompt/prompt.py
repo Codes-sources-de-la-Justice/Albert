@@ -492,12 +492,13 @@ def get_prompter(
     if not model:
         raise ValueError("LLM model not found in the LLM table: %s" % model_name)
     model_url = model[1]
-
     global PROMPTS
     if model_name not in PROMPTS:
         # Try again to rebuild PROMPTS
         PROMPTS = prompts_from_llm_table(LLM_TABLE)
-
+    #print(f"LLM_TABLE:: {LLM_TABLE}")
+    #print(f"model_name::: {model_name}")
+    #print(f"PROMPTS ::: {PROMPTS}")
     if model_name not in PROMPTS:
         raise ValueError(
             "Failed to retrieve information for model: %s - LLM API (%s) might be down"

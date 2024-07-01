@@ -44,7 +44,6 @@ def search(
     current_user: models.User = Depends(get_current_user),
 ):
     query = index.query
-
     if index.expand_acronyms:
         # Detect and expand implicit acronyms
         query = Prompter._expand_acronyms(index.query)
@@ -59,7 +58,6 @@ def search(
         index.should_sids,
         index.must_not_sids,
     )
-
     if index.stream_id:
         # Save the sheets references in the given stream
         db_stream = crud.stream.get_stream(db, index.stream_id)

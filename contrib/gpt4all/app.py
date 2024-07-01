@@ -177,7 +177,6 @@ async def embeddings(request: Embeddings) -> Response:
     Returns:
         Response: JSONResponse
     """
-
     if not WITH_EMBEDDINGS:
         raise HTTPException(status_code=404, detail="Embeddings endpoint is not available.")
 
@@ -208,20 +207,14 @@ async def embeddings(request: Embeddings) -> Response:
 
     return JSONResponse(content=response)
 
-
+""""
 @app.post("/generate")
 async def generate(request: Request) -> Response:
-    params = request.dict()
-    prompt = params.pop("prompt")
-    stream = params.pop("stream", False)
-    sampling_params = {
-        "max_tokens": params.pop("max_tokens", 100),
-        "temp": params.pop("temperature", 0),
-        "streaming": stream,
-    }
+    request_dict = await request.json()
+    print(f"request_dict {request_dict}")
     # @TODO: callback to stop ?
 
-    tokens = app.state.llm_model.generate(prompt=prompt, **sampling_params)
+    tokens = app.state.llm_model.generate(prompt=prompt, **request_dict)
 
     # Streaming case
     if stream:
@@ -235,6 +228,57 @@ async def generate(request: Request) -> Response:
         background_tasks = BackgroundTasks()
         return StreamingResponse(stream_results(tokens), background=background_tasks)
 
+    # Non-streaming case
+    response = JSONResponse({"text": tokens})
+
+    return response
+"""
+
+@app.post("/generate")
+async def generate(request: Request) -> Response:
+    """Generate completion for the request.
+    Modified version from https://github.com/vllm-project/vllm/blob/main/vllm/entrypoints/api_server.py
+
+    The request should be a JSON object with the following fields:
+    - prompt: the prompt to use for the generation.
+    - stream: whether to stream the results or not.
+    - other fields: the sampling parameters (See `SamplingParams` for details).
+    """
+    request_dict = await request.json()
+    prompt = request_dict.pop("prompt")
+    stream = request_dict.pop("stream", False)
+    max_tokens = request_dict.pop("max_tokens",100)
+    temperature = request_dict.pop("temperature",0)
+
+    sampling_params = {
+        "max_tokens": max_tokens,
+        "temp": temperature,
+        "streaming": stream,
+    }
+
+    ###tokens = MODELS["llm_model"].generate(prompt, **sampling_params)
+    
+    model = MODELS["llm_model"]
+    tokens = []
+    with model.chat_session():
+        for token in model.generate(prompt, streaming=True):
+            tokens.append(token)
+    
+    """"
+    if stream:
+
+        async def stream_results(tokens) -> AsyncGenerator[bytes, None]:
+            output = ""
+            for token in tokens:
+                print(f"token {token}")
+                output += token
+                res = (json.dumps({"text": output}) + "\0").encode("utf-8")
+                print(f"res {res}")
+                yield res
+
+        background_tasks = BackgroundTasks()
+        return StreamingResponse(stream_results(tokens), background=background_tasks)
+    """
     # Non-streaming case
     response = JSONResponse({"text": tokens})
 
@@ -257,6 +301,7 @@ async def get_prompt_config(
     """
 
     def _get_model_files(file, allow_download: bool):
+        allow_download=False
         if allow_download:
             try:
                 file_path = hf_hub_download(

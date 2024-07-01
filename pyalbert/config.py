@@ -44,9 +44,9 @@ MJ_FOLDER = os.getenv("MJ_FOLDER")
 CONTACT_EMAIL = os.getenv("CONTACT_EMAIL")
 
 # Public Urls
-API_URL = os.getenv("API_URL", "http://localhost:8000")
-FRONT_URL = os.getenv("FRONT_URL", "http://localhost:8000")
-API_ROUTE_VER = "/api/v2"
+API_URL = os.getenv("API_URL", "http://localhost:8100")
+FRONT_URL = os.getenv("FRONT_URL", "http://localhost:8100")
+API_ROUTE_VER = "/"
 
 # Elasticsearch
 ELASTICSEARCH_IX_VER = "v3"
@@ -77,13 +77,13 @@ if LLM_TABLE:
 else:  # default
     LLM_TABLE = [
         # model_name/api URL
-        ("AgentPublic/albertlight-7b", "http://127.0.0.1:8082")
+        ("AgentPublic/albertlight-7b", "http://127.0.0.1:8000")
     ]
 
 # The embedding model to target
 # @FUTURE: Use same format than the LLM_TABLE to support deploying multi model ?
 EMBEDDINGS_HOST = os.getenv("EMBEDDINGS_HOST", "localhost")
-EMBEDDING_PORT = os.getenv("EMBEDDINGS_PORT", "8005")
+EMBEDDING_PORT = os.getenv("EMBEDDINGS_PORT", "8000")
 EMBEDDING_URL = f"http://{EMBEDDINGS_HOST}:{EMBEDDING_PORT}"
 EMBEDDING_HF_REPO_ID = os.getenv("EMBEDDING_HF_REPO_ID", "intfloat/multilingual-e5-large")
 EMBEDDING_MODEL = (EMBEDDING_HF_REPO_ID, EMBEDDING_URL)
@@ -96,7 +96,7 @@ ACCESS_TOKEN_TTL = 3600 * 24  # seconds
 
 if ENV == "unittest":
     API_ROUTE_VER = "/"
-    LLM_TABLE = [("AgentPublic/albertlight-7b", "http://127.0.0.1:8892")]
+    LLM_TABLE = [("AgentPublic/albertlight-7b", "http://127.0.0.1:8000")]
     ELASTIC_PORT = "9211"
     QDRANT_REST_PORT = "6344"
     QDRANT_USE_GRPC = False
